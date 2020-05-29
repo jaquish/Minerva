@@ -12,18 +12,10 @@ import UIKit
 open class TextViewCellModel: BaseListCellModel {
   public typealias Action = (_ cellModel: TextViewCellModel, _ text: String?) -> Void
 
-  public var placeholderText: String? {
-    get { helper.placeholderText }
-    set { helper.placeholderText = newValue }
-  }
-  public var placeholderTextColor: UIColor? {
-    get { helper.placeholderTextColor }
-    set { helper.placeholderTextColor = newValue }
-  }
-  public var textColor: UIColor? {
-    get { helper.textColor }
-    set { helper.textColor = newValue }
-  }
+  public var placeholderText: String? { helper.placeholderText }
+  public var placeholderTextColor: UIColor? { helper.placeholderTextColor }
+  public var textColor: UIColor? { helper.textColor }
+  public var beginEditingSelectsAllText: Bool { helper.beginEditingSelectsAllText }
 
   public var directionalLayoutMargins = NSDirectionalEdgeInsets(
     top: 8,
@@ -49,21 +41,12 @@ open class TextViewCellModel: BaseListCellModel {
     identifier: String,
     text: String?,
     font: UIFont,
-    changedValue: Action? = nil,
-    finishEditingTextAction: Action? = nil
+    helper: TextViewCellModelHelper
   ) {
     self.text = text
     self.font = font
-    self.helper = TextViewCellModelHelper()
+    self.helper = helper
     super.init(identifier: identifier)
-    self.helper.changedTextAction = { [weak self] text -> Void in
-      guard let strongSelf = self else { return }
-      changedValue?(strongSelf, text)
-    }
-    self.helper.finishEditingTextAction = { [weak self] text -> Void in
-      guard let strongSelf = self else { return }
-      finishEditingTextAction?(strongSelf, text)
-    }
   }
 
   // MARK: - BaseListCellModel
@@ -80,6 +63,7 @@ open class TextViewCellModel: BaseListCellModel {
       && backgroundColor == model.backgroundColor
       && directionalLayoutMargins == model.directionalLayoutMargins
       && textViewAccessibilityIdentifier == model.textViewAccessibilityIdentifier
+      && beginEditingSelectsAllText == model.beginEditingSelectsAllText
   }
 
   override open func size(constrainedTo containerSize: CGSize) -> ListCellSize {
@@ -143,16 +127,31 @@ public final class TextViewCell: BaseReactiveListCell<TextViewCellModel> {
   }
 }
 
-private class TextViewCellModelHelper: NSObject {
-  fileprivate typealias Action = (_ text: String?) -> Void
+public class TextViewCellModelHelper: NSObject {
+  public typealias Action = (_ text: String?) -> Void
 
-  fileprivate var changedTextAction: Action?
-  fileprivate var finishEditingTextAction: Action?
-  fileprivate var placeholderText: String?
-  fileprivate var placeholderTextColor: UIColor?
-  fileprivate var textColor: UIColor?
+  public let textColor: UIColor?
+  public let placeholderText: String?
+  public let placeholderTextColor: UIColor?
+  public let beginEditingSelectsAllText: Bool
 
-  override fileprivate init() {
+  public let changedTextAction: Action?
+  public let finishEditingTextAction: Action?
+
+  public init(
+    textColor: UIColor?,
+    placeholderText: String?,
+    placeholderTextColor: UIColor?,
+    beginEditingSelectsAllText: Bool = true,
+    changedTextAction: Action? = nil,
+    finishEditingTextAction: Action? = nil
+  ) {
+    self.textColor = textColor
+    self.placeholderText = placeholderText
+    self.placeholderTextColor = placeholderTextColor
+    self.beginEditingSelectsAllText = beginEditingSelectsAllText
+    self.changedTextAction = changedTextAction
+    self.finishEditingTextAction = finishEditingTextAction
   }
 }
 
@@ -165,11 +164,15 @@ extension TextViewCellModelHelper: UITextViewDelegate {
 
   public func textViewDidBeginEditing(_ textView: UITextView) {
     guard textView.textColor == placeholderTextColor else {
+      if beginEditingSelectsAllText {
+        DispatchQueue.main.async {
+          textView.selectAll(nil)
+        }
+      }
       return
     }
     textView.text = nil
     textView.textColor = textColor
-
   }
 
   public func textViewDidEndEditing(_ textView: UITextView) {
