@@ -383,7 +383,7 @@ public final class CatalogPresenter: ListPresenter {
             NSAttributedString.Key.foregroundColor: UIColor.label
           ]
         )
-    }
+      }
     let pickerData = PickerData(data: data, options: options)
 
     var cellModels = [ListCellModel]()
@@ -485,18 +485,10 @@ public final class CatalogPresenter: ListPresenter {
     let font = UIFont.preferredFont(forTextStyle: .body)
     var cellModels = [ListCellModel]()
 
-    let helper =TextViewCellModelHelper(
-      textColor: nil,
-      placeholderText: nil,
-      placeholderTextColor: nil,
-      changedTextAction: { _ in }
-    )
-
     let model1 = TextViewCellModel(
       identifier: "TextViewCellModel",
       text: nil,
-      font: font,
-      helper: helper
+      font: font
     )
     model1.textColor = .label
     model1.placeholderTextColor = .secondaryLabel

@@ -91,13 +91,7 @@ public final class FakePresenter: ListPresenter {
       TextViewCellModel(
         identifier: "TextViewCellModel",
         text: text,
-        font: font,
-        helper: TextViewCellModelHelper(
-          textColor: nil,
-          placeholderText: nil,
-          placeholderTextColor: nil,
-          changedTextAction: { _ in }
-        )
+        font: font
       ),
       // Swipe
       SwipeableDetailedLabelCellModel(
