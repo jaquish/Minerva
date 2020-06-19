@@ -283,13 +283,26 @@ extension LegacyListController: ListAdapterMoveDelegate {
 
 // MARK: - ListCellSizeControllerDelegate
 extension LegacyListController: ListCellSizeControllerDelegate {
-  internal func sizeController(
+  internal func
+    sizeController(
     _ sizeController: ListCellSizeController,
     sizeFor model: ListCellModel,
     at indexPath: IndexPath,
     constrainedTo sizeConstraints: ListSizeConstraints
   ) -> CGSize? {
-    sizeDelegate?
+    let section = listSections[indexPath.section]
+    if case .proportionallyWithLastCellFillingWidth(let minimumWidth) = sizeConstraints.distribution, (section.cellModels.count == indexPath.item + 1) {
+      let remainingWidth = sizeController.remainingRowSpaceForCell(at: indexPath.item, in: section, with: sizeConstraints)
+
+      // If there isn't enough remainingWidth, size for a new row.
+      let sizingWidth = remainingWidth >= minimumWidth ? remainingWidth : sizeConstraints.adjustedContainerSize.width
+
+      let sizeToFill = CGSize(width: sizingWidth, height: sizeConstraints.adjustedContainerSize.height)
+      return sizeController.autolayoutSize(for: model, fillingWidthAndLimitedByHeight: sizeToFill)
+    }
+
+    let listSection = listSections[indexPath.section]
+    return sizeDelegate?
       .listController(
         self,
         sizeFor: model,

@@ -142,7 +142,7 @@ internal final class ListCellSizeController {
       }
       height += (rowHeight + constraints.minimumLineSpacing)
       return CGSize(width: adjustedContainerSize.width, height: height)
-    case .proportionally:
+    case .proportionally, .proportionallyWithLastCellFillingWidth:
       guard isVertical else { fatalError("Horizontal is not yet supported") }
       var maxCellHeightInRow: CGFloat = 0
       var currentRowWidth: CGFloat = 0
@@ -163,6 +163,31 @@ internal final class ListCellSizeController {
       return CGSize(width: adjustedContainerSize.width, height: height)
     }
   }
+
+    internal func remainingRowSpaceForCell(at itemIndex: Int, in listSection: ListSection, with constraints: ListSizeConstraints) -> CGFloat {
+        let isVertical = constraints.scrollDirection == .vertical
+        guard isVertical else { fatalError("Horizontal is not yet supported") }
+        let adjustedContainerSize = constraints.containerSize.adjust(for: listSection.constraints.inset)
+        var maxCellHeightInRow: CGFloat = 0
+        var currentRowWidth: CGFloat = 0
+        var height: CGFloat = 0
+
+        for model in listSection.cellModels[0..<itemIndex] {
+          let modelSize = size(for: model, with: constraints)
+          let modelHeight = modelSize.height + constraints.minimumLineSpacing
+          let modelWidth = modelSize.width + constraints.minimumInteritemSpacing
+          maxCellHeightInRow = max(maxCellHeightInRow, modelHeight)
+          currentRowWidth += modelWidth
+          guard currentRowWidth < adjustedContainerSize.width else {
+            height += maxCellHeightInRow
+            maxCellHeightInRow = modelHeight
+            currentRowWidth = modelWidth
+            continue
+          }
+        }
+
+        return adjustedContainerSize.width - currentRowWidth
+    }
 
   // MARK: - Private
 
@@ -193,7 +218,9 @@ internal final class ListCellSizeController {
       } else {
         return CGSize(width: size.width, height: adjustedContainerSize.height)
       }
-    case .proportionally:
+
+    // For .proportionallyWithLastCellFillingWidth, all cells except the last one hit this path.
+    case .proportionally, .proportionallyWithLastCellFillingWidth:
       let size = view.systemLayoutSizeFitting(
         adjustedContainerSize,
         withHorizontalFittingPriority: .fittingSizeLevel,
@@ -205,6 +232,24 @@ internal final class ListCellSizeController {
           return CGSize(width: size.width, height: min(size.height, adjustedContainerSize.height))
       }
     }
+
+  }
+
+  internal func autolayoutSize(
+    for model: ListCellModel,
+    fillingWidthAndLimitedByHeight size: CGSize
+  ) -> CGSize {
+    let collectionCell = cell(for: model)
+    collectionCell.bind(cellModel: model, sizing: true)
+    defer {
+      collectionCell.prepareForReuse()
+    }
+
+    return collectionCell.contentView.systemLayoutSizeFitting(
+      size,
+      withHorizontalFittingPriority: .required,
+      verticalFittingPriority: .fittingSizeLevel
+    )
   }
 
   private func cell(for model: ListCellModel) -> ListCollectionViewCell {
@@ -235,7 +280,7 @@ internal final class ListCellSizeController {
       } else {
         return .explicit(size: CGSize(width: size.width, height: adjustedContainerSize.height))
       }
-    case .proportionally, .equally:
+    case .proportionally, .proportionallyWithLastCellFillingWidth, .equally:
       return modelSize
     }
   }
