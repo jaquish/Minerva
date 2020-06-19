@@ -13,6 +13,7 @@
 		DDBAF41E24940DE600C2818F /* NavigationCoordinatorNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBAF41C24940DE600C2818F /* NavigationCoordinatorNavigator.swift */; };
 		DDBAF41F24940DE600C2818F /* NavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBAF41D24940DE600C2818F /* NavigationCoordinator.swift */; };
 		DDBAF4232496BE8100C2818F /* CoordinationWithNCNTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBAF4222496BE8100C2818F /* CoordinationWithNCNTests.swift */; };
+		DD0DD119249D4143003899B4 /* ListSizeControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0DD118249D4143003899B4 /* ListSizeControllerTests.swift */; };
 		DE9A583D24172E1400E2C81E /* UserListCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9A583C24172E1400E2C81E /* UserListCellModel.swift */; };
 		DE9A583F24172F4000E2C81E /* WorkoutCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE9A583E24172F4000E2C81E /* WorkoutCellModel.swift */; };
 		F501F891233BE77200012C5E /* MainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F501F890233BE77200012C5E /* MainCoordinator.swift */; };
@@ -218,6 +219,7 @@
 		DDBAF41C24940DE600C2818F /* NavigationCoordinatorNavigator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatorNavigator.swift; sourceTree = "<group>"; };
 		DDBAF41D24940DE600C2818F /* NavigationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationCoordinator.swift; sourceTree = "<group>"; };
 		DDBAF4222496BE8100C2818F /* CoordinationWithNCNTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinationWithNCNTests.swift; sourceTree = "<group>"; };
+		DD0DD118249D4143003899B4 /* ListSizeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSizeControllerTests.swift; sourceTree = "<group>"; };
 		DE9A583C24172E1400E2C81E /* UserListCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListCellModel.swift; sourceTree = "<group>"; };
 		DE9A583E24172F4000E2C81E /* WorkoutCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCellModel.swift; sourceTree = "<group>"; };
 		F501F880233BE18800012C5E /* BaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
@@ -803,6 +805,7 @@
 				F53EAF03237B01A200CB7FFA /* IntegrationTests.swift */,
 				F5EB49E02385A9B00029BAAD /* ListTests.swift */,
 				DDBAF4222496BE8100C2818F /* CoordinationWithNCNTests.swift */,
+				DD0DD118249D4143003899B4 /* ListSizeControllerTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -1211,6 +1214,7 @@
 				DDBAF4232496BE8100C2818F /* CoordinationWithNCNTests.swift in Sources */,
 				F5EB49E32385AA5E0029BAAD /* FakeCell.swift in Sources */,
 				F5EB49DB2383958A0029BAAD /* FakePresenter.swift in Sources */,
+				DD0DD119249D4143003899B4 /* ListSizeControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
