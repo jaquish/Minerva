@@ -200,7 +200,7 @@ internal final class ListCellSizeController {
           let modelWidth = modelSize.width + constraints.minimumInteritemSpacing
           maxCellHeightInRow = max(maxCellHeightInRow, modelHeight)
           currentRowWidth += modelWidth
-          guard currentRowWidth < adjustedContainerSize.width else {
+          guard currentRowWidth <= adjustedContainerSize.width else {
             height += maxCellHeightInRow
             maxCellHeightInRow = modelHeight
             currentRowWidth = modelWidth

@@ -58,3 +58,26 @@ public final class FakeCell: ListCollectionViewCell, ListTypedCell, ListDisplaya
     displaying = false
   }
 }
+
+func createCellModels(count: Int) -> [FakeCellModel] {
+  (1...count)
+    .map {
+      FakeCellModel(
+        identifier: "FakeCellModel\($0)",
+        size: .explicit(size: CGSize(width: 75, height: 100))
+      )
+    }
+}
+
+func createCellModelsWithRelativeLastCell(count: Int) -> [ListCellModel] {
+  var cells: [ListCellModel] = (1..<count)
+    .map {
+      FakeCellModel(
+        identifier: "FakeCellModel\($0)",
+        size: .explicit(size: CGSize(width: 50, height: 50))
+      )
+    }
+  let lastCell = ExpandingTextInputCell(identifier: "LastCellThatFillsWidth", placeholder: "Hi")
+  cells.append(lastCell)
+  return cells
+}

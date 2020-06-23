@@ -166,6 +166,38 @@ public final class ListTests: CommonSetupTestCase {
   }
 
   public func testRemoveCellModel() {
+    let cellModel0 = FakeCellModel(
+      identifier: "FakeCellModel0",
+      size: .explicit(size: CGSize(width: 100, height: 100))
+    )
+    let cellModel1 = FakeCellModel(
+      identifier: "FakeCellModel1",
+      size: .explicit(size: CGSize(width: 100, height: 100))
+    )
+
+    let section = ListSection(cellModels: [cellModel0, cellModel1], identifier: "Section")
+
+    let updateExpectation = expectation(description: "Update Expectation")
+    listController.update(with: [section], animated: false) { finished in
+      XCTAssertTrue(finished)
+      updateExpectation.fulfill()
+    }
+    wait(for: [updateExpectation], timeout: 5)
+    XCTAssertEqual(collectionVC.collectionView.numberOfSections, 1)
+    XCTAssertEqual(collectionVC.collectionView.numberOfItems(inSection: 0), 2)
+
+    let removeExpectation = expectation(description: "Remove Expectation")
+    listController.removeCellModel(at: IndexPath(item: 0, section: 0), animated: false) {
+      finished in
+      XCTAssertTrue(finished)
+      removeExpectation.fulfill()
+    }
+    wait(for: [removeExpectation], timeout: 5)
+    XCTAssertEqual(collectionVC.collectionView.numberOfSections, 1)
+    XCTAssertEqual(collectionVC.collectionView.numberOfItems(inSection: 0), 1)
+  }
+
+  public func testRemoveLastCellModelInSection() {
     let cellModel = FakeCellModel(
       identifier: "FakeCellModel1",
       size: .explicit(size: CGSize(width: 100, height: 100))
@@ -238,31 +270,6 @@ public class CommonSetupTestCase: XCTestCase {
   override public func tearDown() {
     listController = nil
     super.tearDown()
-  }
-
-  // MARK: - Private
-
-  public func createCellModels(count: Int) -> [FakeCellModel] {
-    (1...count)
-      .map {
-        FakeCellModel(
-          identifier: "FakeCellModel\($0)",
-          size: .explicit(size: CGSize(width: 75, height: 100))
-        )
-      }
-  }
-
-  public func createCellModelsWithRelativeLastCell(count: Int) -> [ListCellModel] {
-    var cells: [ListCellModel] = (1..<count)
-      .map {
-        FakeCellModel(
-          identifier: "FakeCellModel\($0)",
-          size: .explicit(size: CGSize(width: 50, height: 50))
-        )
-      }
-    let lastCell = ExpandingTextInputCell(identifier: "LastCellThatFillsWidth", placeholder: "Hi")
-    cells.append(lastCell)
-    return cells
   }
 }
 
