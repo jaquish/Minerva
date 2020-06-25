@@ -19,18 +19,13 @@ internal protocol ListCellSizeControllerDelegate: AnyObject {
 
 }
 
-var next: Int = 0
-
 internal final class ListCellSizeController {
   private typealias CellType = String
   internal weak var delegate: ListCellSizeControllerDelegate?
 
   private var cachedCells = [CellType: ListCollectionViewCell]()
 
-    var id: Int
   internal init() {
-    id = next
-    next += 1
   }
 
   internal func clearCache() {

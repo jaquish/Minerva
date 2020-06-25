@@ -12,7 +12,7 @@ import XCTest
 public final class ListTests: CommonSetupTestCase {
 
   public func testDynamicSizing() {
-    let sizeManager = SizeManager()
+    let sizeManager = FakeSizeManager()
     listController.sizeDelegate = sizeManager
     let marginCellModel = MarginCellModel()
     let section = ListSection(cellModels: [marginCellModel], identifier: "Section")
@@ -271,32 +271,4 @@ public class CommonSetupTestCase: XCTestCase {
     listController = nil
     super.tearDown()
   }
-}
-
-public class ExpandingTextInputCell: TextInputCellModel {
-  override public var cellType: ListCollectionViewCell.Type { TextInputCell.self }
-
-  public init(identifier: String, placeholder: String) {
-    super.init(identifier: identifier, placeholder: placeholder, font: .systemFont(ofSize: 16))
-  }
-
-  override public func size(constrainedTo containerSize: CGSize) -> ListCellSize {
-    .relative
-  }
-}
-
-// MARK: - ListControllerSizeDelegate
-public final class SizeManager: ListControllerSizeDelegate {
-  public var handledSizeRequest = false
-
-  public func listController(
-    _ listController: ListController,
-    sizeFor model: ListCellModel,
-    at indexPath: IndexPath,
-    constrainedTo sizeConstraints: ListSizeConstraints
-  ) -> CGSize? {
-    handledSizeRequest = true
-    return .init(width: 24, height: 24)
-  }
-
 }
