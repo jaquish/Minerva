@@ -101,7 +101,11 @@ internal final class ListCellSizeController {
     }
   }
 
-  internal func size(of listSection: ListSection, atSectionIndex sectionIndex: Int, with constraints: ListSizeConstraints) -> CGSize {
+  internal func sizeExcludingMarginCells(
+    of listSection: ListSection,
+    atSectionIndex sectionIndex: Int,
+    with constraints: ListSizeConstraints
+  ) -> CGSize {
     let isVertical = constraints.scrollDirection == .vertical
     let adjustedContainerSize = constraints.containerSize.adjust(for: listSection.constraints.inset)
     var height: CGFloat = listSection.constraints.inset.top + listSection.constraints.inset.bottom
@@ -124,10 +128,13 @@ internal final class ListCellSizeController {
         height += listSection.cellModels.reduce(
           (sum: 0, itemIndex: 0),
           { x, model -> (sum: CGFloat, itemIndex: Int) in
+            let newIndex = x.itemIndex + 1
+            if model is MarginCellModel {
+              return (x.sum, newIndex)
+            }
             let indexPath = IndexPath(item: x.itemIndex, section: sectionIndex)
             let length = size(for: model, at: indexPath, in: listSection, with: constraints).height
             let newSum = x.sum + length + constraints.minimumLineSpacing
-            let newIndex = x.itemIndex + 1
             return (newSum, newIndex)
           }
         ).sum

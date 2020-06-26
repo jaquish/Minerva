@@ -46,7 +46,7 @@ public class MainCoordinator<T: ListPresenter, U: ListViewController>: BaseCoord
     let dynamicHeight = listController.listSections.reduce(collectionViewBounds.height) {
       sum,
       section -> CGFloat in
-      sum - listController.size(of: section, containerSize: collectionViewBounds).height
+      sum - listController.sizeExcludingMarginCells(of: section, containerSize: collectionViewBounds).height
     }
     let marginCellCount = listController.cellModels.reduce(0) { count, model -> Int in
       guard case .relative = model.size(constrainedTo: .zero) else { return count }

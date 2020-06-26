@@ -95,7 +95,7 @@ public protocol ListController: AnyObject {
   /// - Parameters:
   ///   - listSection: The section to calculate the size of.
   ///   - containerSize: The container size to constrain the size of each cell when calculating their size.
-  func size(of listSection: ListSection, containerSize: CGSize) -> CGSize
+  func sizeExcludingMarginCells(of listSection: ListSection, containerSize: CGSize) -> CGSize
 
   /// Provides the size for the specified CellModel.
   /// - Parameters:
