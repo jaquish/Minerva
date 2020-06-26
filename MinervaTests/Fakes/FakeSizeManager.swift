@@ -20,5 +20,24 @@ public final class FakeSizeManager: ListControllerSizeDelegate {
     handledSizeRequest = true
     return .init(width: 24, height: 24)
   }
+}
 
+public final class FakeSizeManagerForMarginCells: ListControllerSizeDelegate {
+  public func listController(
+    _ listController: ListController,
+    sizeFor model: ListCellModel,
+    at indexPath: IndexPath,
+    constrainedTo sizeConstraints: ListSizeConstraints
+  ) -> CGSize? {
+    if let marginCellModel = model as? MarginCellModel {
+      return RelativeCellSizingHelper.sizeOfMarginCellInVerticalList(
+        listController: listController,
+        sizeFor: marginCellModel,
+        at: indexPath,
+        constrainedTo: sizeConstraints
+      )
+    } else {
+      return nil
+    }
+  }
 }

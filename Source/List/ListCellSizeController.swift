@@ -52,7 +52,8 @@ internal final class ListCellSizeController {
     for cellModel: ListCellModel,
     at indexPath: IndexPath?,
     in section: ListSection?,
-    with sizeConstraints: ListSizeConstraints
+    with sizeConstraints: ListSizeConstraints,
+    canDelegateForRelativeSize canDelegate: Bool = true
   ) -> CGSize {
     let cellSize = listCellSize(for: cellModel, with: sizeConstraints)
     switch cellSize {
@@ -71,10 +72,10 @@ internal final class ListCellSizeController {
         return .zero
       }
 
-      // Handle the last cell when distribution is .proportionallyWithLastCellFillingWidth
+      // Handle the last cell when distribution is .proportionallyWithLastCellFillingWidth and cell opts in to .relative
       let isLastCell = (section.cellModels.count == indexPath.item + 1)
       if case .proportionallyWithLastCellFillingWidth(let minimumWidth) = sizeConstraints.distribution, isLastCell {
-        let remainingWidth = remainingRowSpaceForCell(at: indexPath, in: section, with: sizeConstraints)
+        let remainingWidth = remainingRowWidthForCell(at: indexPath, in: section, with: sizeConstraints)
 
         // If there isn't enough remainingWidth, size for a new row.
         let sizingWidth = remainingWidth >= minimumWidth ? remainingWidth : sizeConstraints.adjustedContainerSize.width
@@ -82,6 +83,8 @@ internal final class ListCellSizeController {
         let sizeToFill = CGSize(width: sizingWidth, height: sizeConstraints.adjustedContainerSize.height)
         return autolayoutSize(for: cellModel, fillingWidthAndLimitedByHeight: sizeToFill)
       }
+
+      guard canDelegate else { return .zero }
 
       guard
         let size = self.delegate?
@@ -101,10 +104,11 @@ internal final class ListCellSizeController {
     }
   }
 
-  internal func sizeExcludingMarginCells(
+  internal func size(
     of listSection: ListSection,
     atSectionIndex sectionIndex: Int,
-    with constraints: ListSizeConstraints
+    with constraints: ListSizeConstraints,
+    includingRelativeCellsSizedByDelegate canDelegate: Bool = true
   ) -> CGSize {
     let isVertical = constraints.scrollDirection == .vertical
     let adjustedContainerSize = constraints.containerSize.adjust(for: listSection.constraints.inset)
@@ -128,13 +132,10 @@ internal final class ListCellSizeController {
         height += listSection.cellModels.reduce(
           (sum: 0, itemIndex: 0),
           { x, model -> (sum: CGFloat, itemIndex: Int) in
-            let newIndex = x.itemIndex + 1
-            if model is MarginCellModel {
-              return (x.sum, newIndex)
-            }
             let indexPath = IndexPath(item: x.itemIndex, section: sectionIndex)
-            let length = size(for: model, at: indexPath, in: listSection, with: constraints).height
+            let length = size(for: model, at: indexPath, in: listSection, with: constraints, canDelegateForRelativeSize: canDelegate).height
             let newSum = x.sum + length + constraints.minimumLineSpacing
+            let newIndex = x.itemIndex + 1
             return (newSum, newIndex)
           }
         ).sum
@@ -144,7 +145,7 @@ internal final class ListCellSizeController {
         width += listSection.cellModels.reduce(
           0,
           { sum, model -> CGFloat in
-            let length = size(for: model, at: nil, in: listSection, with: constraints).width
+            let length = size(for: model, at: nil, in: listSection, with: constraints, canDelegateForRelativeSize: canDelegate).width
             return sum + length + constraints.minimumLineSpacing
           }
         )
@@ -159,7 +160,7 @@ internal final class ListCellSizeController {
           rowHeight = 0
         }
         let indexPath = IndexPath(item: index, section: sectionIndex)
-        let modelHeight = size(for: model, at: indexPath, in: listSection, with: constraints).height
+        let modelHeight = size(for: model, at: indexPath, in: listSection, with: constraints, canDelegateForRelativeSize: canDelegate).height
         rowHeight = max(rowHeight, modelHeight)
       }
       height += (rowHeight + constraints.minimumLineSpacing)
@@ -170,7 +171,7 @@ internal final class ListCellSizeController {
       var currentRowWidth: CGFloat = 0
       for (index, model) in listSection.cellModels.enumerated() {
         let indexPath = IndexPath(item: index, section: sectionIndex)
-        let modelSize = size(for: model, at: indexPath, in: listSection, with: constraints)
+        let modelSize = size(for: model, at: indexPath, in: listSection, with: constraints, canDelegateForRelativeSize: canDelegate)
         let modelHeight = modelSize.height + constraints.minimumLineSpacing
         let modelWidth = modelSize.width + constraints.minimumInteritemSpacing
         maxCellHeightInRow = max(maxCellHeightInRow, modelHeight)
@@ -187,7 +188,7 @@ internal final class ListCellSizeController {
     }
   }
 
-    private func remainingRowSpaceForCell(at indexPath: IndexPath, in listSection: ListSection, with constraints: ListSizeConstraints) -> CGFloat {
+    private func remainingRowWidthForCell(at indexPath: IndexPath, in listSection: ListSection, with constraints: ListSizeConstraints) -> CGFloat {
         let isVertical = constraints.scrollDirection == .vertical
         guard isVertical else { fatalError("Horizontal is not yet supported") }
         let adjustedContainerSize = constraints.containerSize.adjust(for: listSection.constraints.inset)
