@@ -4,24 +4,24 @@
 // https://github.com/OptimizeFitness/Minerva/blob/master/LICENSE
 //
 
-/// Divide remaining vertical space to fill `sizeConstraints.containerSize` equally between all MarginCellModels.
 public enum RelativeCellSizingHelper {
-  public static func sizeOfMarginCellInVerticalList(
+  /// Divide remaining vertical space to fill `sizeConstraints.containerSize` equally between all cells matching filter.
+  public static func sizeOf(
+    cellModel: ListCellModel,
+    withExcessHeightDividedEquallyBetween include: (ListCellModel) -> Bool,
     listController: ListController,
-    sizeFor model: MarginCellModel,
-    at indexPath: IndexPath,
     constrainedTo sizeConstraints: ListSizeConstraints
-  ) -> CGSize? {
+  ) -> CGSize {
     let collectionViewBounds = sizeConstraints.containerSize
     let minHeight: CGFloat = 1
     let dynamicHeight = listController.listSections.reduce(collectionViewBounds.height) {
       sum,
       section -> CGFloat in
-      sum - listController.size(of: section, containerSize: collectionViewBounds, includingRelativeCellsSizedByDelegate: false).height
+      sum - listController.size(of: section, containerSize: collectionViewBounds).height
     }
     let cellModels = listController.listSections.flatMap { $0.cellModels }
     let marginCellCount = cellModels.reduce(0) { count, model -> Int in
-      guard case .relative = model.size(constrainedTo: .zero) else { return count }
+      guard case .relative = model.size(constrainedTo: .zero), include(model) else { return count }
       return count + 1
     }
     let width = sizeConstraints.adjustedContainerSize.width

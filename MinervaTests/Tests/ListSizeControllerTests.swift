@@ -116,8 +116,7 @@ public final class ListSizeControllerTests: CommonSetupTestCase {
     let sizeManager = FakeSizeManagerForMarginCells()
     listController.sizeDelegate = sizeManager
 
-    let marginCell = MarginCellModel()
-    let cellModels: [ListCellModel] = createCellModels(count: 1) + [marginCell]
+    let cellModels: [ListCellModel] = createCellModels(count: 1) + [MarginCellModel()]
     let section = ListSection(cellModels: cellModels, identifier: "Section")
 
     let updateExpectation = expectation(description: "Update Expectation")
@@ -127,13 +126,8 @@ public final class ListSizeControllerTests: CommonSetupTestCase {
     }
     wait(for: [updateExpectation], timeout: 5)
 
-    let containerSize = collectionVC.view.frame.size
-    let size = listController.size(of: section, containerSize: containerSize)
-    XCTAssertEqual(size, containerSize) // The layout fills the entire height because of the MarginCell
-
-    let listSizeContraints = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section.constraints)
-    let marginCellSize = listController.size(of: marginCell, with: listSizeContraints)
-    XCTAssertEqual(marginCellSize, CGSize(width: 200, height: 400))
+    let marginCellIndex = IndexPath(item: 1, section: 0)
+    verifySizeOfCell(at: marginCellIndex, matches: CGSize(width: 200, height: 400))
   }
 
   public func testSectionSizing_multipleMarginCells_expandEquallyToFillHeight() {
@@ -153,28 +147,23 @@ public final class ListSizeControllerTests: CommonSetupTestCase {
     }
     wait(for: [updateExpectation], timeout: 5)
 
-    let containerSize = collectionVC.view.frame.size
-    let size = listController.size(of: section, containerSize: containerSize)
-    XCTAssertEqual(size, containerSize) // The margin cell filled the remaining height
+    let marginCellSize = CGSize(width: 200, height: 200)
 
-    let listSizeContraints = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section.constraints)
-    let marginCellAboveSize = listController.size(of: marginCellAbove, with: listSizeContraints)
-    XCTAssertEqual(marginCellAboveSize, CGSize(width: 200, height: 200))
-    let marginCellBelowSize = listController.size(of: marginCellBelow, with: listSizeContraints)
-    XCTAssertEqual(marginCellBelowSize, CGSize(width: 200, height: 200))
+    let marginCellAboveIndexPath = IndexPath(item: 0, section: 0)
+    verifySizeOfCell(at: marginCellAboveIndexPath, matches: marginCellSize)
+
+    let marginCellBelowIndexPath = IndexPath(item: 2, section: 0)
+    verifySizeOfCell(at: marginCellBelowIndexPath, matches: marginCellSize)
   }
 
   public func testSectionSizing_multipleMarginCells_expandEquallyToFillHeight_evenInDifferentSections() {
     let sizeManager = FakeSizeManagerForMarginCells()
     listController.sizeDelegate = sizeManager
 
-    let marginCellInSection0 = MarginCellModel()
-    let marginCellInSection1 = MarginCellModel()
-
-    let section0models: [ListCellModel] = createCellModels(count: 2, idPrefix: "section0") + [marginCellInSection0]
+    let section0models: [ListCellModel] = createCellModels(count: 2, idPrefix: "section0") + [MarginCellModel()]
     let section0 = ListSection(cellModels: section0models, identifier: "section0")
 
-    let section1models: [ListCellModel] = createCellModels(count: 2, idPrefix: "section1") + [marginCellInSection1]
+    let section1models: [ListCellModel] = createCellModels(count: 2, idPrefix: "section1") + [MarginCellModel()]
     let section1 = ListSection(cellModels: section1models, identifier: "section1")
 
     let updateExpectation = expectation(description: "Update Expectation")
@@ -184,35 +173,22 @@ public final class ListSizeControllerTests: CommonSetupTestCase {
     }
     wait(for: [updateExpectation], timeout: 5)
 
-    let containerSize = collectionVC.view.frame.size
-    let section0size = listController.size(of: section0, containerSize: containerSize)
-    let halfSize = CGSize(width: containerSize.width, height: containerSize.height / 2.0)
-    // Since each section is identical, they each should take 50% of height.
-    XCTAssertEqual(section0size, halfSize)
-    XCTAssertEqual(section0size, halfSize)
+    let marginCellSize = CGSize(width: 200, height: 100)
+    let marginCellSection0IndexPath = IndexPath(item: 0, section: 0)
+    let marginCellSection1IndexPath = IndexPath(item: 0, section: 1)
 
-    // marginCellInSection0 took up 50% of 'free' height
-    let listSizeContraints0 = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section0.constraints)
-    let marginCellInSection0Size = listController.size(of: marginCellInSection0, with: listSizeContraints0)
-    XCTAssertEqual(marginCellInSection0Size, CGSize(width: 200, height: 50))
-
-    // marginCellInSection1 took up 50% of 'free' height
-    let listSizeContraints1 = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section1.constraints)
-    let marginCellInSection1Size = listController.size(of: marginCellInSection1, with: listSizeContraints1)
-    XCTAssertEqual(marginCellInSection1Size, CGSize(width: 200, height: 50))
+    verifySizeOfCell(at: marginCellSection0IndexPath, matches: marginCellSize)
+    verifySizeOfCell(at: marginCellSection1IndexPath, matches: marginCellSize)
   }
 
   public func testSectionSizing_marginCells_shrinkToHeightOf1_whenContentHeightExceedsFrame() {
     let sizeManager = FakeSizeManagerForMarginCells()
     listController.sizeDelegate = sizeManager
 
-    let marginCellInSection0 = MarginCellModel()
-    let marginCellInSection1 = MarginCellModel()
-
-    let section0models: [ListCellModel] = createCellModels(count: 10, idPrefix: "section0") + [marginCellInSection0]
+    let section0models: [ListCellModel] = createCellModels(count: 10, idPrefix: "section0") + [MarginCellModel()]
     let section0 = ListSection(cellModels: section0models, identifier: "section0")
 
-    let section1models: [ListCellModel] = createCellModels(count: 10, idPrefix: "section1") + [marginCellInSection1]
+    let section1models: [ListCellModel] = createCellModels(count: 10, idPrefix: "section1") + [MarginCellModel()]
     let section1 = ListSection(cellModels: section1models, identifier: "section1")
 
     let updateExpectation = expectation(description: "Update Expectation")
@@ -222,33 +198,27 @@ public final class ListSizeControllerTests: CommonSetupTestCase {
     }
     wait(for: [updateExpectation], timeout: 5)
 
-    let containerSize = collectionVC.view.frame.size
+    let marginCellSize = CGSize(width: 200, height: 1)
+    let marginCellInSection0IndexPath = IndexPath(item: 10, section: 0)
+    let marginCellInSection1IndexPath = IndexPath(item: 10, section: 1)
 
-    // marginCellInSection0 shrunk to 1pt in height
-    let listSizeContraints0 = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section0.constraints)
-    let marginCellInSection0Size = listController.size(of: marginCellInSection0, with: listSizeContraints0)
-    XCTAssertEqual(marginCellInSection0Size, CGSize(width: 200, height: 1))
-
-    // marginCellInSection1 shrunk to 1pt in height
-    let listSizeContraints1 = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section0.constraints)
-    let marginCellInSection1Size = listController.size(of: marginCellInSection1, with: listSizeContraints1)
-    XCTAssertEqual(marginCellInSection1Size, CGSize(width: 200, height: 1))
+    verifySizeOfCell(at: marginCellInSection0IndexPath, matches: marginCellSize)
+    verifySizeOfCell(at: marginCellInSection1IndexPath, matches: marginCellSize)
   }
 
   public func testSectionSizing_marginCells_whenDistributionIs_proportionallyWithLastCellFillingWidth() {
     // A more complicated layout since both MarginCells and proportionallyWithLastCellFillingWidth use
-    // .relative cell sizing
+    // .relative cell sizing. The extra space should only be divided between the MarginCells.
     let sizeManager = FakeSizeManagerForMarginCells()
     listController.sizeDelegate = sizeManager
 
     // section 0 with proportionallyWithLastCellFillingWidth
-    let section0models: [ListCellModel] = createCellModelsWithRelativeLastCell(count: 5)
+    let section0models: [ListCellModel] = createCellModelsWithRelativeLastCell(count: 3)
     var section0 = ListSection(cellModels: section0models, identifier: "section-0")
     section0.constraints.distribution = .proportionallyWithLastCellFillingWidth(minimumWidth: 100)
 
     // section 1 with a margin cell
-    let marginCellInSection1 = MarginCellModel()
-    let section1models: [ListCellModel] = createCellModels(count: 5) + [marginCellInSection1]
+    let section1models: [ListCellModel] = createCellModels(count: 1) + [MarginCellModel()]
     let section1 = ListSection(cellModels: section1models, identifier: "section-1")
 
     let updateExpectation = expectation(description: "Update Expectation")
@@ -258,10 +228,34 @@ public final class ListSizeControllerTests: CommonSetupTestCase {
     }
     wait(for: [updateExpectation], timeout: 5)
 
-    let containerSize = collectionVC.view.frame.size
+    let marginCellIndexPath = IndexPath(item: 1, section: 1)
+    let marginCellSize = CGSize(width: 200, height: 350)
+    verifySizeOfCell(at: marginCellIndexPath, matches: marginCellSize)
+  }
 
-    let listSizeContraints1 = ListSizeConstraints(containerSize: containerSize, sectionConstraints: section1.constraints)
-    let marginCellInSection1Size = listController.size(of: marginCellInSection1, with: listSizeContraints1)
-    XCTAssertEqual(marginCellInSection1Size, CGSize(width: 200, height: 1))
+  public func testSectionSizing_marginCellsAtMinimum_whenDistributionIs_proportionallyWithLastCellFillingWidth() {
+    // Same as previous test, except with enough cells that the MarginCell shrinks to it's minimum height.
+    let sizeManager = FakeSizeManagerForMarginCells()
+    listController.sizeDelegate = sizeManager
+
+    // section 0 with proportionallyWithLastCellFillingWidth
+    let section0models: [ListCellModel] = createCellModelsWithRelativeLastCell(count: 5)
+    var section0 = ListSection(cellModels: section0models, identifier: "section-0")
+    section0.constraints.distribution = .proportionallyWithLastCellFillingWidth(minimumWidth: 100)
+
+    // section 1 with a margin cell
+    let section1models: [ListCellModel] = createCellModels(count: 5) + [MarginCellModel()]
+    let section1 = ListSection(cellModels: section1models, identifier: "section-1")
+
+    let updateExpectation = expectation(description: "Update Expectation")
+    listController.update(with: [section0, section1], animated: false) { finished in
+      XCTAssertTrue(finished)
+      updateExpectation.fulfill()
+    }
+    wait(for: [updateExpectation], timeout: 5)
+
+    let marginCellIndexPath = IndexPath(item: 5, section: 1)
+    let marginCellSize = CGSize(width: 200, height: 1)
+    verifySizeOfCell(at: marginCellIndexPath, matches: marginCellSize)
   }
 }

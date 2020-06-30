@@ -224,11 +224,7 @@ public final class LegacyListController: NSObject, ListController {
     scrollTo(cellModel: cellModel, scrollPosition: scrollPosition, animated: animated)
   }
 
-  public func size(
-    of listSection: ListSection,
-    containerSize: CGSize,
-    includingRelativeCellsSizedByDelegate canDelegate: Bool
-  ) -> CGSize {
+  public func size(of listSection: ListSection, containerSize: CGSize) -> CGSize {
     dispatchPrecondition(condition: .onQueue(.main))
     let sizeConstraints = ListSizeConstraints(
       containerSize: containerSize,
@@ -236,14 +232,10 @@ public final class LegacyListController: NSObject, ListController {
     )
 
     guard let sectionIndex = sectionIndexOf(listSection) else { return .zero }
-    return sizeController.size(of: listSection, atSectionIndex: sectionIndex, with: sizeConstraints, includingRelativeCellsSizedByDelegate: canDelegate)
+    return sizeController.size(of: listSection, atSectionIndex: sectionIndex, with: sizeConstraints)
   }
 
-  public func size(
-    of cellModel: ListCellModel,
-    with constraints: ListSizeConstraints,
-    includingRelativeCellsSizedByDelegate canDelegate: Bool
-  ) -> CGSize {
+  public func size(of cellModel: ListCellModel, with constraints: ListSizeConstraints) -> CGSize {
     dispatchPrecondition(condition: .onQueue(.main))
 
     let indexPath = self.indexPath(for: cellModel)

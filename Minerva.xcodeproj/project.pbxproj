@@ -11,6 +11,7 @@
 		2CD24A88891F518C450AD525 /* Pods_MinervaCatalog.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19665C6027FF5E560AE8A1ED /* Pods_MinervaCatalog.framework */; };
 		7B2F7071C99EC43E40224E55 /* Pods_MinervaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7604DF25C8A340E28653D4 /* Pods_MinervaTests.framework */; };
 		DD0DD119249D4143003899B4 /* ListSizeControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0DD118249D4143003899B4 /* ListSizeControllerTests.swift */; };
+		DD2C235324ABBD0D008602EE /* CommonSetupTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD2C235224ABBD0D008602EE /* CommonSetupTestCase.swift */; };
 		DDAB55D924A2B839004BB933 /* LegacyListControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAB55D824A2B839004BB933 /* LegacyListControllerTests.swift */; };
 		DDAB55DD24A52552004BB933 /* FakeSizeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAB55DC24A52552004BB933 /* FakeSizeManager.swift */; };
 		DDAB55E124A6CFD6004BB933 /* RelativeCellSizingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDAB55E024A6CFD6004BB933 /* RelativeCellSizingHelper.swift */; };
@@ -220,6 +221,7 @@
 		BF373880490EA10DD3EC8F46 /* Pods-MinervaCatalog.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MinervaCatalog.release.xcconfig"; path = "Target Support Files/Pods-MinervaCatalog/Pods-MinervaCatalog.release.xcconfig"; sourceTree = "<group>"; };
 		CB7604DF25C8A340E28653D4 /* Pods_MinervaTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MinervaTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD0DD118249D4143003899B4 /* ListSizeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSizeControllerTests.swift; sourceTree = "<group>"; };
+		DD2C235224ABBD0D008602EE /* CommonSetupTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonSetupTestCase.swift; sourceTree = "<group>"; };
 		DDAB55D824A2B839004BB933 /* LegacyListControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyListControllerTests.swift; sourceTree = "<group>"; };
 		DDAB55DC24A52552004BB933 /* FakeSizeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSizeManager.swift; sourceTree = "<group>"; };
 		DDAB55E024A6CFD6004BB933 /* RelativeCellSizingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeCellSizingHelper.swift; sourceTree = "<group>"; };
@@ -812,6 +814,7 @@
 				DDAB55D824A2B839004BB933 /* LegacyListControllerTests.swift */,
 				F53EAF03237B01A200CB7FFA /* IntegrationTests.swift */,
 				F5EB49E02385A9B00029BAAD /* ListTests.swift */,
+				DD2C235224ABBD0D008602EE /* CommonSetupTestCase.swift */,
 				DDBAF4222496BE8100C2818F /* CoordinationWithNCNTests.swift */,
 				DD0DD118249D4143003899B4 /* ListSizeControllerTests.swift */,
 			);
@@ -1219,6 +1222,7 @@
 				F5EB49E12385A9B00029BAAD /* ListTests.swift in Sources */,
 				F5EB49DD238395920029BAAD /* FakeCoordinator.swift in Sources */,
 				F53EAF04237B01A200CB7FFA /* IntegrationTests.swift in Sources */,
+				DD2C235324ABBD0D008602EE /* CommonSetupTestCase.swift in Sources */,
 				F5EB49DF2383FC1A0029BAAD /* CoordinationTests.swift in Sources */,
 				DDBAF4232496BE8100C2818F /* CoordinationWithNCNTests.swift in Sources */,
 				F5EB49E32385AA5E0029BAAD /* FakeCell.swift in Sources */,

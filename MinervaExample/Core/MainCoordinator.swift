@@ -41,11 +41,11 @@ public class MainCoordinator<T: ListPresenter, U: ListViewController>: BaseCoord
     at indexPath: IndexPath,
     constrainedTo sizeConstraints: ListSizeConstraints
   ) -> CGSize? {
-    if let marginCellModel = model as? MarginCellModel {
-      return RelativeCellSizingHelper.sizeOfMarginCellInVerticalList(
+    if model is MarginCellModel {
+      return RelativeCellSizingHelper.sizeOf(
+        cellModel: model,
+        withExcessHeightDividedEquallyBetween: { $0 is MarginCellModel },
         listController: listController,
-        sizeFor: marginCellModel,
-        at: indexPath,
         constrainedTo: sizeConstraints
       )
     } else {

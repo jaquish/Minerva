@@ -97,17 +97,11 @@ public protocol ListController: AnyObject {
   ///   - containerSize: The container size to constrain the size of each cell when calculating their size.
   func size(of listSection: ListSection, containerSize: CGSize) -> CGSize
 
-  /// Provides the size for the specified ListSection.
-  /// - Parameters:
-  ///   - listSection: The section to calculate the size of.
-  ///   - containerSize: The container size to constrain the size of each cell when calculating their size.
-  func size(of listSection: ListSection, containerSize: CGSize, includingRelativeCellsSizedByDelegate: Bool) -> CGSize
-
   /// Provides the size for the specified CellModel.
   /// - Parameters:
   ///   - cellModel: The cell model to calculate a size for.
   ///   - constraints: Specifies the constraints to use when calculating the size.
-  func size(of cellModel: ListCellModel, with constraints: ListSizeConstraints, includingRelativeCellsSizedByDelegate: Bool) -> CGSize
+  func size(of cellModel: ListCellModel, with constraints: ListSizeConstraints) -> CGSize
 }
 
 extension ListController {
@@ -126,16 +120,6 @@ extension ListController {
   /// Removes a cell model at a specific IndexPath, triggering an update to remove the cell from the collection view.
   public func removeCellModel(at indexPath: IndexPath, animated: Bool) {
     removeCellModel(at: indexPath, animated: animated, completion: nil)
-  }
-
-  /// Default includingRelativeCellsSizedByDelegate to` true`
-  public func size(of listSection: ListSection, containerSize: CGSize) -> CGSize {
-    size(of: listSection, containerSize: containerSize, includingRelativeCellsSizedByDelegate: true)
-  }
-
-  /// Default includingRelativeCellsSizedByDelegate to` true`
-  public func size(of cellModel: ListCellModel, with constraints: ListSizeConstraints) -> CGSize {
-    size(of: cellModel, with: constraints, includingRelativeCellsSizedByDelegate: true)
   }
 }
 
